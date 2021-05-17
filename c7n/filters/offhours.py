@@ -447,12 +447,12 @@ class Time(Filter):
     def get_tag_value(self, i):
         """Get the resource's tag value specifying its schedule."""
         # Look for the tag, Normalize tag key and tag value
-        found = self.fallback_schedule
+        found = False
         for t in i.get('Tags', ()):
             if t['Key'].lower() == self.tag_key:
-                found = t['Value']
+                found = self.fallback_schedule
                 break
-        if found in (False, None):
+        if found is False:
             return False
         # enforce utf8, or do translate tables via unicode ord mapping
         value = found.lower().encode('utf8').decode('utf8')
