@@ -232,6 +232,7 @@ might look like:
 # note we have to module import for our testing mocks
 import datetime
 import logging
+import re
 from os.path import join
 
 from dateutil import zoneinfo, tz as tzutil
@@ -450,9 +451,13 @@ class Time(Filter):
         found = False
         for t in i.get('Tags', ()):
             if t['Key'].lower() == self.tag_key:
-                found = self.fallback_schedule
-                break
-        if found is False:
+                if re.match('^off$',t['Value']):
+                    found = t['Value']
+                    break
+                else:
+                    found = self.fallback_schedule
+                    break
+        if found in (False, None):
             return False
         # enforce utf8, or do translate tables via unicode ord mapping
         value = found.lower().encode('utf8').decode('utf8')
