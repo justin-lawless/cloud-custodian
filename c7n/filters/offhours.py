@@ -476,7 +476,7 @@ class Time(Filter):
 class OffHour(Time):
 
     schema = type_schema(
-        'offhour', rinherit=Time.schema, required=['offhour', 'default_tz'],
+        'offhour', rinherit=Time.schema, #required=['offhour', 'default_tz'],
         offhour={'type': 'integer', 'minimum': 0, 'maximum': 23})
     time_type = "off"
 
