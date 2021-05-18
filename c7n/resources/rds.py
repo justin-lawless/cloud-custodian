@@ -232,6 +232,22 @@ def _get_available_engine_upgrades(client, major=False):
 
 
 filters.register('offhour', OffHour)
+class InstanceOffHour(OffHour):
+
+    schema = type_schema(
+        'offhour', rinherit=OffHour.schema,
+        **{'state-filter': {'type': 'boolean'}})
+    schema_alias = False
+
+    valid_origin_states = ('running',)
+
+    def process(self, resources, event=None):
+        if self.data.get('state-filter', True):
+            return super(InstanceOffHour, self).process(
+                self.filter_resources(resources, 'State.Name', self.valid_origin_states))
+        else:
+            return super(InstanceOffHour, self).process(resources)
+
 filters.register('onhour', OnHour)
 
 
