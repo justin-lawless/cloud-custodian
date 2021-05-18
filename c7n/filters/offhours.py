@@ -451,9 +451,14 @@ class Time(Filter):
         found = False
         for t in i.get('Tags', ()):
             if t['Key'].lower() == self.tag_key:
-                found = self.fallback_schedule
-                break
-        if found is False:
+                if re.match('^off$',t['Value']):
+                    found = t['Value']
+                    break
+                else:
+                    found = self.fallback_schedule
+                    break
+        if found in (False, None):
+        #if found is False:
             return False
         # enforce utf8, or do translate tables via unicode ord mapping
         value = found.lower().encode('utf8').decode('utf8')
@@ -498,7 +503,7 @@ class OffHour(Time):
 class OnHour(Time):
 
     schema = type_schema(
-        'onhour', rinherit=Time.schema, required=['onhour', 'default_tz'],
+        'onhour', rinherit=Time.schema, #required=['onhour', 'default_tz'],
         onhour={'type': 'integer', 'minimum': 0, 'maximum': 23})
     time_type = "on"
 

@@ -249,6 +249,22 @@ class InstanceOffHour(OffHour):
             return super(InstanceOffHour, self).process(resources)
 
 filters.register('onhour', OnHour)
+class InstanceOnHour(OnHour):
+
+    schema = type_schema(
+        'onhour', rinherit=OnHour.schema,
+        **{'state-filter': {'type': 'boolean'}})
+    schema_alias = False
+
+    valid_origin_states = ('stopped',)
+
+    def process(self, resources, event=None):
+        if self.data.get('state-filter', True):
+            return super(InstanceOnHour, self).process(
+                self.filter_resources(resources, 'State.Name', self.valid_origin_states))
+        else:
+            return super(InstanceOnHour, self).process(resources)
+
 
 
 @filters.register('default-vpc')
